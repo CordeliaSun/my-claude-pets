@@ -127,22 +127,56 @@ html, body {
   text-align: center;
 }
 
-.pet .graph .meter {
+/* per-limit usage table: label | mini gauge | % */
+.pet .graph .quota {
   width: 100%;
-  height: 5px;
+  min-width: 148px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pet .graph .qrow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font: 9px 'NeoDunggeunmo', monospace;
+  color: #fff;
+}
+
+.pet .graph .qrow .ql {
+  min-width: 34px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.pet .graph .qrow .qbar {
+  flex: 1;
+  height: 6px;
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 2px;
   overflow: hidden;
 }
 
-.pet .graph .meter .fill {
+.pet .graph .qrow .fill {
   height: 100%;
   background: linear-gradient(to right, #7ee08a, #ffd166);
   transition: width 0.4s;
 }
 
-.pet .graph .meter .fill.hot {
+.pet .graph .qrow .fill.hot {
   background: #ff5d5d;
+}
+
+.pet .graph .qrow .qp {
+  min-width: 26px;
+  text-align: right;
+}
+
+.pet .graph .qfoot {
+  font: 8px 'NeoDunggeunmo', monospace;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
 }
 
 /* ---------- project search panel (retro game dialog) ---------- */

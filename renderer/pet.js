@@ -226,17 +226,11 @@ class Pet {
     this.captionEl = document.createElement('div')
     this.captionEl.className = 'caption'
     this.captionEl.textContent = 'tokens: …'
-    this.meterEl = document.createElement('div')
-    this.meterEl.className = 'meter'
-    this.meterFillEl = document.createElement('div')
-    this.meterFillEl.className = 'fill'
-    this.meterEl.appendChild(this.meterFillEl)
-    this.caption2El = document.createElement('div')
-    this.caption2El.className = 'caption'
+    this.quotaEl = document.createElement('div')
+    this.quotaEl.className = 'quota'
     this.graphEl.appendChild(this.barsEl)
     this.graphEl.appendChild(this.captionEl)
-    this.graphEl.appendChild(this.meterEl)
-    this.graphEl.appendChild(this.caption2El)
+    this.graphEl.appendChild(this.quotaEl)
     this.el.appendChild(this.graphEl)
 
     const flip = document.createElement('span')
@@ -278,41 +272,53 @@ class Pet {
       return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
     }
 
-    let line2
-    let ratio = 0
+    // 사용량 테이블: 라벨 | 미니 게이지 | %  (+ 리셋 시각 푸터)
+    let rows
+    let footer = ''
     const quotaLimits = usage.quota && usage.quota.limits
     if (quotaLimits && quotaLimits.length) {
       // 공식 플랜 사용량 % (Claude Code /usage와 동일한 API)
+      rows = quotaLimits.map((l) => ({ label: l.label, percent: l.percent }))
       const session = quotaLimits.find((l) => l.kind === 'session')
-      const others = quotaLimits.filter((l) => l.kind !== 'session')
-      if (session) {
-        ratio = Math.min(1, session.percent / 100)
-        line2 = `5h ${session.percent}%`
-        if (session.resetsAt) line2 += ` · ${hm(session.resetsAt)} 리셋`
-      } else {
-        line2 = `5h ?`
-      }
-      if (others.length) {
-        line2 += '\n' + others.map((l) => `${l.label} ${l.percent}%`).join(' · ')
-      }
+      if (session && session.resetsAt) footer = `5h는 ${hm(session.resetsAt)} 리셋`
     } else if (usage.limit) {
       // 폴백: 트랜스크립트 기반 추정 (한도 = 역대 최대 5시간 블록)
-      const remain = Math.max(0, usage.limit - block.tokens)
-      ratio = Math.min(1, block.tokens / usage.limit)
-      line2 = `5h 남음 ${formatTokens(remain)}/${formatTokens(usage.limit)}`
-      if (block.active && block.resetAt) line2 += ` · ${hm(block.resetAt)} 리셋`
+      const percent = Math.round(Math.min(1, block.tokens / usage.limit) * 100)
+      rows = [{ label: '5h*', percent }]
+      footer = `추정 ${formatTokens(block.tokens)}/${formatTokens(usage.limit)}`
+      if (block.active && block.resetAt) footer += ` · ${hm(block.resetAt)} 리셋`
     } else {
-      line2 = `5h 사용 ${formatTokens(block.tokens)}`
-      if (block.active && block.resetAt) line2 += ` · ${hm(block.resetAt)} 리셋`
+      rows = []
+      footer = `5h 사용 ${formatTokens(block.tokens)}`
     }
-    this.caption2El.textContent = ''
-    line2.split('\n').forEach((text) => {
-      const row = document.createElement('div')
-      row.textContent = text
-      this.caption2El.appendChild(row)
-    })
-    this.meterFillEl.style.width = Math.round(ratio * 100) + '%'
-    this.meterFillEl.classList.toggle('hot', ratio > 0.85)
+
+    this.quotaEl.textContent = ''
+    for (const row of rows) {
+      const line = document.createElement('div')
+      line.className = 'qrow'
+      const label = document.createElement('span')
+      label.className = 'ql'
+      label.textContent = row.label
+      const bar = document.createElement('div')
+      bar.className = 'qbar'
+      const fill = document.createElement('div')
+      fill.className = 'fill' + (row.percent > 85 ? ' hot' : '')
+      fill.style.width = Math.min(100, Math.round(row.percent)) + '%'
+      bar.appendChild(fill)
+      const pct = document.createElement('span')
+      pct.className = 'qp'
+      pct.textContent = Math.round(row.percent) + '%'
+      line.appendChild(label)
+      line.appendChild(bar)
+      line.appendChild(pct)
+      this.quotaEl.appendChild(line)
+    }
+    if (footer) {
+      const foot = document.createElement('div')
+      foot.className = 'qfoot'
+      foot.textContent = footer
+      this.quotaEl.appendChild(foot)
+    }
 
     if (!usage.daily) return
     this.barsEl.textContent = ''

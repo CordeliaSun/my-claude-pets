@@ -38,6 +38,15 @@ iTerm opens right in that project with `claude` already running.
 
 ## Install
 
+**The lazy way** — you already live in Claude Code, so let it do the work.
+Paste this into any Claude Code session:
+
+```
+Clone https://github.com/CordeliaSun/my-claude-pets, install dependencies, and start it
+```
+
+**The manual way**:
+
 ```bash
 git clone https://github.com/CordeliaSun/my-claude-pets.git
 cd my-claude-pets

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- my-claude-pets original mascot: a round white cat with a pink bow -->
+  <g stroke="#1f1f1f" stroke-width="2.6" stroke-linejoin="round">
+    <!-- ears -->
+    <path d="M14 20 L8 6 L24 12 Z" fill="#ffffff"/>
+    <path d="M50 20 L56 6 L40 12 Z" fill="#ffffff"/>
+    <path d="M14.5 16.5 L11.5 9.5 L20 12.8 Z" fill="#ffb3cd" stroke="none"/>
+    <path d="M49.5 16.5 L52.5 9.5 L44 12.8 Z" fill="#ffb3cd" stroke="none"/>
+    <!-- body -->
+    <rect x="18" y="38" width="28" height="22" rx="9" fill="#ffd648"/>
+    <!-- paws -->
+    <ellipse cx="23" cy="58" rx="6" ry="4.5" fill="#ffffff"/>
+    <ellipse cx="41" cy="58" rx="6" ry="4.5" fill="#ffffff"/>
+    <!-- head -->
+    <ellipse cx="32" cy="26" rx="23" ry="18" fill="#ffffff"/>
+  </g>
+  <!-- face (no stroke) -->
+  <circle cx="24" cy="25" r="2.6" fill="#1f1f1f"/>
+  <circle cx="40" cy="25" r="2.6" fill="#1f1f1f"/>
+  <circle cx="24.9" cy="24.1" r="0.9" fill="#ffffff"/>
+  <circle cx="40.9" cy="24.1" r="0.9" fill="#ffffff"/>
+  <path d="M29.5 30.5 Q32 33 34.5 30.5" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="17" cy="30.5" rx="3.4" ry="2.2" fill="#ffb3cd" opacity="0.85"/>
+  <ellipse cx="47" cy="30.5" rx="3.4" ry="2.2" fill="#ffb3cd" opacity="0.85"/>
+  <!-- whiskers -->
+  <g stroke="#1f1f1f" stroke-width="1.4" stroke-linecap="round">
+    <path d="M6 25 L13 26"/><path d="M6 31 L13 30"/>
+    <path d="M58 25 L51 26"/><path d="M58 31 L51 30"/>
+  </g>
+  <!-- bow on the right ear -->
+  <g stroke="#1f1f1f" stroke-width="2" stroke-linejoin="round">
+    <path d="M47 8 L39 12 L47 17 Z" fill="#ff6fa5"/>
+    <path d="M47 8 L55 12 L47 17 Z" fill="#ff6fa5"/>
+    <circle cx="47" cy="12.5" r="3.2" fill="#ff8fb8"/>
+  </g>
+</svg>

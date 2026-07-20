@@ -54,8 +54,10 @@ npm install
 npm start
 ```
 
-On first launch a `pets.json` is created from `pets.example.json` and a 🐾
-icon appears in the menu bar (reload config / quit live there).
+On first launch a `pets.json` is created from `pets.example.json`, the
+bundled mascot (an original bow-wearing cat, `images/mascot.svg`) starts
+walking along the bottom of your screen, and a 🐾 icon appears in the menu
+bar (reload config / quit live there).
 
 ## Configuration (`pets.json`)
 

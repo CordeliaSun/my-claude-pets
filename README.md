@@ -1,5 +1,9 @@
 # my-claude-pets 🐾
 
+<p align="center">
+  <img src="docs/demo.png" width="360" alt="A pet walking on the desktop with a live Claude Code token budget graph over its head" />
+</p>
+
 Desktop pets for people who live in [Claude Code](https://claude.com/claude-code).
 
 Your pets roam along the bottom of **all your monitors**, carry a live

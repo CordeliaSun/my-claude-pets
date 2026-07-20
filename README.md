@@ -1,7 +1,7 @@
 # my-claude-pets 🐾
 
 <p align="center">
-  <img src="docs/demo.png" width="360" alt="A pet walking on the desktop with a live Claude Code token budget graph over its head" />
+  <img src="docs/demo.gif" width="560" alt="A pet walking on the desktop with a live Claude Code token budget HUD — click it, search a project, and it opens in iTerm running claude" />
 </p>
 
 Desktop pets for people who live in [Claude Code](https://claude.com/claude-code).

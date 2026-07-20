@@ -83,9 +83,34 @@ bar (reload config / quit live there).
 }
 ```
 
-Drop your own character image into `images/` and point `image` at it —
-`pets.json` and `images/` contents are gitignored, so your customizations
-stay local. Reload from the 🐾 menu after editing.
+### Default mascot
+
+<img src="images/mascot.svg" width="90" align="left" alt="the default mascot — an original white cat with a pink bow" />
+
+Out of the box your pet is this original bow-wearing cat
+(`images/mascot.svg`). Remove the `image` field to fall back to the
+`emoji` instead, or bring your own character below.
+
+<br clear="left" />
+
+### Use your own character
+
+1. Get any image with a **transparent background** (PNG or SVG, roughly
+   square looks best).
+2. Drop it into `images/` — e.g. `images/mario.png`.
+3. Point your pet at it in `pets.json`:
+
+   ```json
+   { "name": "mario", "project": "~/Projects/game", "image": "./images/mario.png", "scale": 1.3 }
+   ```
+
+4. Menu bar 🐾 → **reload config**. Done — no restart needed.
+
+Paths can also be absolute or start with `~` (e.g.
+`"image": "~/Pictures/my-cat.png"`), so you don't have to copy files into
+the repo. `pets.json` and everything you add to `images/` are gitignored —
+your customizations stay local. If the image path is missing, the pet
+falls back to its `emoji`. Use `scale` to size your character.
 
 ## How the token numbers work
 

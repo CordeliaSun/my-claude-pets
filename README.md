@@ -11,9 +11,10 @@ Your pets roam along the bottom of **all your monitors**, carry a live
 retro game-style search panel pops up — type a project name, hit Enter, and
 iTerm opens right in that project with `claude` already running.
 
-> macOS + [iTerm2](https://iterm2.com/) only (for now). The token graph reads
-> your local Claude Code transcripts — no network calls, nothing leaves your
-> machine.
+> macOS + [iTerm2](https://iterm2.com/) only (for now). The token HUD reads
+> your local Claude Code transcripts, plus (optionally) Anthropic's official
+> usage endpoint — the same call Claude Code's `/usage` makes, using your own
+> locally stored login. Nothing else ever leaves your machine.
 
 ## Features
 
@@ -23,10 +24,12 @@ iTerm opens right in that project with `claude` already running.
 - **Pick them up** — drag a pet anywhere (even to another monitor, the drag
   follows your cursor across displays). Drop it in mid-air and it stays there;
   drop it near the floor and it walks off again.
-- **Token budget HUD** — a 7-day usage bar chart plus a **5-hour window
-  gauge**: how many tokens you have left in the current window, your estimated
-  limit, and when the window resets. Turns red past 85%. Aggregated across all
-  your Claude Code projects, refreshed every 2 minutes.
+- **Token budget HUD** — a 7-day usage bar chart plus your **official plan
+  usage**: the same percentages Claude Code's `/usage` shows (5-hour session,
+  weekly all-models, weekly per-model) with the session reset time, as a live
+  gauge that turns red past 85%. Refreshed every 2 minutes. If you're not
+  logged in (or set `"officialQuota": false`), it falls back to a local
+  estimate from your transcripts.
 - **Project launcher** — click a pet, fuzzy-search every project folder under
   your configured roots, press Enter. If iTerm is already running you choose
   **new tab** or **new window**; otherwise a window opens directly. The
@@ -68,6 +71,9 @@ bar (reload config / quit live there).
 
   // command run in the terminal for projects opened via search
   "defaultCommand": "claude",
+
+  // set to false to skip the official plan-usage lookup (see below)
+  "officialQuota": true,
 
   "pets": [
     {
@@ -114,18 +120,25 @@ falls back to its `emoji`. Use `scale` to size your character.
 
 ## How the token numbers work
 
-Claude Code writes a transcript (JSONL, with per-message token usage) for
-every session under `~/.claude/projects/`. my-claude-pets aggregates those
-files (input + output + cache read/write, deduplicated by message id):
+**Official plan percentages** (the gauge and `5h 9% · 주간 7% · Fable 13%`
+lines) come from Anthropic's usage endpoint — the exact same numbers Claude
+Code's `/usage` screen shows. The app reads the OAuth token Claude Code
+already stores on your machine (macOS Keychain, falling back to
+`~/.claude/.credentials.json`) and makes one HTTPS request to
+`api.anthropic.com` every 2 minutes. That is the app's **only** network
+call; the token is never written anywhere or sent anywhere else. Opt out
+with `"officialQuota": false` in `pets.json`.
 
-- **오늘 / today** — tokens used today across all projects.
-- **Bar chart** — daily totals for the last 7 days.
-- **5h gauge** — Claude plans rate-limit on a rolling ~5-hour window. Usage is
-  grouped into 5-hour blocks (first activity floored to the hour, matching
-  [ccusage](https://github.com/ryoppippi/ccusage)'s model). Since Anthropic
-  doesn't expose your actual plan quota locally, the *limit* shown is your
-  **largest historical 5-hour block** — accurate if you've ever hit your real
-  limit, conservative otherwise. Remaining = limit − current block.
+**Local token counts** (today + the 7-day bar chart) are aggregated from the
+transcripts (JSONL with per-message usage) Claude Code writes under
+`~/.claude/projects/` — input + output + cache read/write, deduplicated by
+message id, fully offline.
+
+If official percentages aren't available (not logged in, offline, or opted
+out), the 5h gauge falls back to a local estimate: usage grouped into
+5-hour blocks (first activity floored to the hour, matching
+[ccusage](https://github.com/ryoppippi/ccusage)'s model) against your
+largest historical block as the assumed limit.
 
 ## Tests
 

@@ -273,22 +273,44 @@ class Pet {
     const block = usage.block || { tokens: 0, active: false, resetAt: null }
     this.captionEl.textContent = `오늘 ${formatTokens(usage.today)} tok`
 
-    // 5시간 윈도우: 한도(역대 최대 블록 추정) 대비 남은 양 + 리셋 시각
+    const hm = (iso) => {
+      const d = new Date(iso)
+      return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+    }
+
     let line2
     let ratio = 0
-    if (usage.limit) {
+    const quotaLimits = usage.quota && usage.quota.limits
+    if (quotaLimits && quotaLimits.length) {
+      // 공식 플랜 사용량 % (Claude Code /usage와 동일한 API)
+      const session = quotaLimits.find((l) => l.kind === 'session')
+      const others = quotaLimits.filter((l) => l.kind !== 'session')
+      if (session) {
+        ratio = Math.min(1, session.percent / 100)
+        line2 = `5h ${session.percent}%`
+        if (session.resetsAt) line2 += ` · ${hm(session.resetsAt)} 리셋`
+      } else {
+        line2 = `5h ?`
+      }
+      if (others.length) {
+        line2 += '\n' + others.map((l) => `${l.label} ${l.percent}%`).join(' · ')
+      }
+    } else if (usage.limit) {
+      // 폴백: 트랜스크립트 기반 추정 (한도 = 역대 최대 5시간 블록)
       const remain = Math.max(0, usage.limit - block.tokens)
       ratio = Math.min(1, block.tokens / usage.limit)
       line2 = `5h 남음 ${formatTokens(remain)}/${formatTokens(usage.limit)}`
+      if (block.active && block.resetAt) line2 += ` · ${hm(block.resetAt)} 리셋`
     } else {
       line2 = `5h 사용 ${formatTokens(block.tokens)}`
+      if (block.active && block.resetAt) line2 += ` · ${hm(block.resetAt)} 리셋`
     }
-    if (block.active && block.resetAt) {
-      const d = new Date(block.resetAt)
-      const hm = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
-      line2 += ` · ${hm} 리셋`
-    }
-    this.caption2El.textContent = line2
+    this.caption2El.textContent = ''
+    line2.split('\n').forEach((text) => {
+      const row = document.createElement('div')
+      row.textContent = text
+      this.caption2El.appendChild(row)
+    })
     this.meterFillEl.style.width = Math.round(ratio * 100) + '%'
     this.meterFillEl.classList.toggle('hot', ratio > 0.85)
 

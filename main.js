@@ -5,6 +5,7 @@ const path = require('node:path')
 const { loadPets } = require('./lib/config')
 const { buildOsascriptArgs } = require('./lib/iterm')
 const { collectAccountUsage, estimateBlockLimit } = require('./lib/usage')
+const { fetchQuota } = require('./lib/quota')
 const { scanProjects } = require('./lib/projects')
 
 const CONFIG_PATH = path.join(__dirname, 'pets.json')
@@ -38,10 +39,13 @@ let blockLimit = null // 역대 최대 5시간 블록 = 한도 추정치 (시작
 
 async function refreshUsage() {
   if (!wins.length) return
-  const account = await collectAccountUsage()
+  const [account, quota] = await Promise.all([
+    collectAccountUsage(),
+    state.officialQuota !== false ? fetchQuota() : Promise.resolve(null),
+  ])
   const usage = {}
   for (const pet of state.pets) {
-    usage[pet.name] = { ...account, limit: blockLimit }
+    usage[pet.name] = { ...account, limit: blockLimit, quota }
   }
   for (const win of wins) {
     if (!win.isDestroyed()) win.webContents.send('usage-updated', usage)

@@ -124,6 +124,7 @@ html, body {
   font: 10px 'NeoDunggeunmo', monospace;
   color: #fff;
   white-space: nowrap;
+  text-align: center;
 }
 
 .pet .graph .meter {

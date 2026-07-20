@@ -1,0 +1,28 @@
+{
+  "name": "my-claude-pets",
+  "version": "0.1.0",
+  "description": "Desktop pets that roam across your monitors, show your Claude Code token budget, and launch any project in iTerm with one click",
+  "main": "main.js",
+  "license": "MIT",
+  "author": "CordeliaSun",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CordeliaSun/my-claude-pets"
+  },
+  "keywords": [
+    "electron",
+    "desktop-pet",
+    "claude-code",
+    "claude",
+    "macos",
+    "iterm2",
+    "launcher"
+  ],
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0"
+  }
+}

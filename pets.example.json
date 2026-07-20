@@ -1,0 +1,14 @@
+{
+  "searchRoots": ["~/Desktop", "~/Documents", "~/Developer", "~/Projects"],
+  "defaultCommand": "claude",
+  "pets": [
+    {
+      "name": "my-pet",
+      "project": "~/Desktop",
+      "emoji": "🐱",
+      "scale": 1,
+      "speed": 1,
+      "command": "claude"
+    }
+  ]
+}

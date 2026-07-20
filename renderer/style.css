@@ -1,0 +1,236 @@
+@font-face {
+  font-family: 'NeoDunggeunmo';
+  src: url('../fonts/neodgm.ttf') format('truetype');
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+}
+
+#stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.pet {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  will-change: transform;
+}
+
+.pet .body {
+  font-size: 48px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+}
+
+.pet img.body {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.pet.walking .body {
+  animation: bob 0.35s ease-in-out infinite alternate;
+}
+
+.pet.idle .body {
+  animation: breathe 2.4s ease-in-out infinite;
+}
+
+.pet .flip {
+  display: inline-block;
+}
+
+.pet.facing-left .flip {
+  transform: scaleX(-1);
+}
+
+@keyframes bob {
+  from { transform: translateY(0) rotate(-2deg); }
+  to   { transform: translateY(-5px) rotate(2deg); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+
+.pet:hover .body {
+  filter: drop-shadow(0 2px 6px rgba(255, 200, 60, 0.9));
+}
+
+.pet.grabbed {
+  cursor: grabbing;
+}
+
+.pet.grabbed .body {
+  animation: none;
+  transform: rotate(-6deg) scale(1.08);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+}
+
+/* ---------- always-visible usage graph ---------- */
+
+.pet .graph {
+  padding: 5px 8px 3px;
+  border-radius: 10px;
+  background: rgba(25, 25, 30, 0.82);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.pet .graph .bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 46px;
+}
+
+.pet .graph .col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.pet .graph .bar {
+  width: 9px;
+  border-radius: 2px 2px 0 0;
+  background: linear-gradient(to top, #ff7eb0, #ffb7d2);
+}
+
+.pet .graph .day {
+  font: 7px 'NeoDunggeunmo', monospace;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.pet .graph .caption {
+  font: 10px 'NeoDunggeunmo', monospace;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.pet .graph .meter {
+  width: 100%;
+  height: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.pet .graph .meter .fill {
+  height: 100%;
+  background: linear-gradient(to right, #7ee08a, #ffd166);
+  transition: width 0.4s;
+}
+
+.pet .graph .meter .fill.hot {
+  background: #ff5d5d;
+}
+
+/* ---------- project search panel (retro game dialog) ---------- */
+
+#search-panel {
+  position: absolute;
+  width: 340px;
+  display: none;
+  flex-direction: column;
+  background: #ffffff;
+  border: 3px solid #1a1a1a;
+  border-radius: 2px;
+  box-shadow: 6px 6px 0 rgba(26, 26, 26, 0.35);
+  overflow: hidden;
+  font-family: 'NeoDunggeunmo', monospace;
+}
+
+#search-panel.open {
+  display: flex;
+}
+
+#search-panel input {
+  border: 2px solid #1a1a1a;
+  outline: none;
+  background: #fff;
+  color: #1a1a1a;
+  font: 14px 'NeoDunggeunmo', monospace;
+  padding: 9px 10px;
+  margin: 10px 10px 6px;
+  border-radius: 2px;
+}
+
+#search-panel input:focus {
+  box-shadow: inset 3px 3px 0 rgba(26, 26, 26, 0.12);
+}
+
+#search-panel input::placeholder {
+  color: #9a9a9a;
+}
+
+#search-panel ul {
+  list-style: none;
+  margin: 0 10px 10px;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+#search-panel ul::-webkit-scrollbar {
+  display: none;
+}
+
+#search-panel li {
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 8px;
+  color: #1a1a1a;
+  font: 13px 'NeoDunggeunmo', monospace;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#search-panel li::before {
+  content: '';
+  width: 12px;
+  flex: none;
+}
+
+#search-panel li .dir {
+  margin-left: auto;
+  color: #9a9a9a;
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#search-panel li.selected {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+#search-panel li.selected::before {
+  content: '▶';
+  font-size: 10px;
+}
+
+#search-panel li.selected .dir {
+  color: rgba(255, 255, 255, 0.55);
+}

@@ -1,0 +1,6 @@
+node_modules/
+pets.json
+images/*
+!images/.gitkeep
+.DS_Store
+npm-debug.log*

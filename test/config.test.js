@@ -99,6 +99,21 @@ test('image path resolves relative to config directory', () => {
   assert.strictEqual(pets[0].image, path.join(dir, 'images/cat.png'))
 })
 
+test('balloonImage resolves like image and is null when missing', () => {
+  const { dir, file } = tmpConfig('[]')
+  fs.mkdirSync(path.join(dir, 'images'))
+  fs.writeFileSync(path.join(dir, 'images', 'balloon.png'), 'x')
+  fs.writeFileSync(file, JSON.stringify([
+    { name: 'a', project: dir, balloonImage: './images/balloon.png' },
+    { name: 'b', project: dir, balloonImage: './images/nope.png' },
+    { name: 'c', project: dir },
+  ]))
+  const { pets } = loadPets(file)
+  assert.strictEqual(pets[0].balloonImage, path.join(dir, 'images/balloon.png'))
+  assert.strictEqual(pets[1].balloonImage, null)
+  assert.strictEqual(pets[2].balloonImage, null)
+})
+
 test('each pet gets a distinct default emoji', () => {
   const a = normalizePet({ name: 'a', project: '/tmp' }, 0, '/tmp')
   const b = normalizePet({ name: 'b', project: '/tmp' }, 1, '/tmp')

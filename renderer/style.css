@@ -51,6 +51,7 @@ html, body {
 
 .pet .flip {
   display: inline-block;
+  position: relative; /* anchor for the 🎈 fallback overlay */
 }
 
 .pet.facing-left .flip {
@@ -65,6 +66,32 @@ html, body {
 @keyframes breathe {
   0%, 100% { transform: scale(1); }
   50%      { transform: scale(1.05); }
+}
+
+.pet.ballooning .flip {
+  animation: balloon-sway 2.2s ease-in-out infinite;
+  transform-origin: 50% 12%; /* hang from the balloon, swing at the bottom */
+}
+
+@keyframes balloon-sway {
+  0%, 100% { transform: rotate(-5deg); }
+  50%      { transform: rotate(5deg); }
+}
+
+/* 🎈 fallback shown while descending when no balloonImage is configured */
+.pet .balloon {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: 88%;
+  transform: translateX(-50%);
+  font-size: 36px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+}
+
+.pet.ballooning .balloon {
+  display: block;
 }
 
 .pet:hover .body {

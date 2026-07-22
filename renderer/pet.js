@@ -3,6 +3,8 @@ const stage = document.getElementById('stage')
 const WALK_SPEED = 55 // px per second at speed 1
 const PET_WIDTH = 72
 const DRAG_THRESHOLD = 4 // px of movement before a press becomes a drag
+const BALLOON_FALL_SPEED = 55 // px per second while riding the balloon down
+const BALLOON_DROP_MIN = 40 // dropped higher than this: ride a balloon down
 
 function formatTokens(n) {
   if (n < 1000) return String(n)
@@ -243,12 +245,15 @@ class Pet {
       img.style.height = 64 * config.scale + 'px'
       img.draggable = false
       flip.appendChild(img)
+      this.bodyEl = img
+      this.homeSrc = img.src
     } else {
       const span = document.createElement('span')
       span.className = 'body'
       span.textContent = config.emoji
       span.style.fontSize = 48 * config.scale + 'px'
       flip.appendChild(span)
+      this.bodyEl = span
     }
     this.el.appendChild(flip)
 
@@ -371,6 +376,47 @@ class Pet {
     document.addEventListener('mouseup', onUp)
   }
 
+  // Dropped up in the air: ride a balloon gently down to the floor.
+  startBalloon() {
+    this.state = 'ballooning'
+    this.stateUntil = Infinity
+    this.balloonT = 0
+    this.balloonBaseX = this.x
+    this.el.classList.add('ballooning')
+    this.el.classList.remove('walking', 'idle')
+    if (this.config.balloonImage && this.config.image) {
+      // dedicated balloon sprite: swap the body image while descending
+      this.bodyEl.src = 'file://' + encodeURI(this.config.balloonImage)
+      // sprite may be landscape; keep it a bit larger, object-fit handles aspect
+      this.bodyEl.style.width = Math.round(92 * this.config.scale) + 'px'
+      this.bodyEl.style.height = Math.round(70 * this.config.scale) + 'px'
+    } else if (!this.balloonEl) {
+      // no sprite configured: hang a 🎈 above the pet instead
+      this.balloonEl = document.createElement('span')
+      this.balloonEl.className = 'balloon'
+      this.balloonEl.textContent = '🎈'
+      this.bodyEl.parentElement.appendChild(this.balloonEl)
+    }
+  }
+
+  endBalloon() {
+    this.el.classList.remove('ballooning')
+    if (this.config.balloonImage && this.config.image) {
+      this.bodyEl.src = this.homeSrc
+      this.bodyEl.style.width = 64 * this.config.scale + 'px'
+      this.bodyEl.style.height = 64 * this.config.scale + 'px'
+    }
+    // touch down: always stroll off right away so she never freezes mid-screen
+    this.state = 'walking'
+    const max = window.innerWidth - PET_WIDTH
+    this.x = Math.min(Math.max(this.x, 0), max)
+    this.target = Math.random() * max
+    this.dir = this.target > this.x ? 1 : -1
+    this.stateUntil = performance.now() + 120_000 // safety cap; arrival ends the walk
+    this.el.classList.add('walking')
+    this.el.classList.remove('idle')
+  }
+
   // At a screen edge: ask main whether a neighboring display exists.
   // If it does, this window soon receives 'pet-remove' and the neighbor
   // receives 'pet-arrive'; otherwise turn around.
@@ -411,6 +457,12 @@ class Pet {
 
   tick(now, dt) {
     if (!this.dragging && !panel.open) {
+      if (this.state === 'ballooning') {
+        this.balloonT += dt
+        this.y = Math.max(0, this.y - BALLOON_FALL_SPEED * (dt / 1000))
+        this.x = this.balloonBaseX + Math.sin(this.balloonT / 700) * 14
+        if (this.y === 0) this.endBalloon()
+      }
       if (now >= this.stateUntil) this.pickState(now)
       if (this.state === 'walking' && this.y === 0) {
         this.x += this.dir * WALK_SPEED * this.config.speed * (dt / 1000)
@@ -503,10 +555,15 @@ window.deskPets.onDragGhostRemove(removeGhost)
 window.deskPets.onDragFinal(({ pet, x, y }) => {
   const g = ensureGhost(pet)
   g.x = x
-  g.y = y < 40 ? 0 : y // near the ground: snap down and walk again
   g.dragging = false
   g.el.classList.remove('grabbed')
-  g.stateUntil = 0
+  if (y < BALLOON_DROP_MIN) {
+    g.y = 0
+    g.endBalloon() // near the ground: snap down and stroll off
+  } else {
+    g.y = y
+    g.startBalloon() // dropped in the air: float down on a balloon
+  }
   ghost = null
 })
 

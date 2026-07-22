@@ -78,9 +78,9 @@ function reloadConfig() {
 }
 
 function createWindows() {
-  for (const win of wins) {
-    if (!win.isDestroyed()) win.destroy()
-  }
+  // Destroy old windows AFTER creating new ones — if the window count ever
+  // hits zero, 'window-all-closed' fires and quits the app mid-rebuild.
+  const oldWins = wins
   wins = []
   winAreas = []
   const displays = [...screen.getAllDisplays()].sort((a, b) => a.workArea.x - b.workArea.x)
@@ -123,6 +123,9 @@ function createWindows() {
     wins.push(win)
     winAreas.push({ ...workArea })
   })
+  for (const win of oldWins) {
+    if (!win.isDestroyed()) win.destroy()
+  }
 }
 
 let rebuildTimer = null

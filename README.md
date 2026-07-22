@@ -22,8 +22,9 @@ iTerm opens right in that project with `claude` already running.
   pause, breathe, and cross over to neighboring displays when they hit a
   screen edge. Windows are fully click-through except on the pets themselves.
 - **Pick them up** — drag a pet anywhere (even to another monitor, the drag
-  follows your cursor across displays). Drop it in mid-air and it stays there;
-  drop it near the floor and it walks off again.
+  follows your cursor across displays). Drop it in mid-air and it floats
+  gently back down under a 🎈 (or a custom `balloonImage` sprite), then
+  strolls off; drop it near the floor and it walks off right away.
 - **Token budget HUD** — a 7-day usage bar chart plus your **official plan
   usage**: the same percentages Claude Code's `/usage` shows (5-hour session,
   weekly all-models, weekly per-model) with the session reset time, as a live
@@ -80,6 +81,7 @@ bar (reload config / quit live there).
       "name": "my-pet",              // required — label + identity
       "project": "~/Desktop",        // required — this pet's home project
       "image": "./images/cat.png",   // optional — transparent PNG; emoji fallback
+      "balloonImage": "./images/cat-balloon.png", // optional — sprite shown while floating down after an air drop; 🎈 overlay when unset
       "emoji": "🐱",                 // optional — used when no image is set
       "scale": 1,                    // optional — pet size multiplier
       "speed": 1,                    // optional — walking speed multiplier

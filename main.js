@@ -78,8 +78,8 @@ function reloadConfig() {
 }
 
 function createWindows() {
-  // Destroy old windows AFTER creating new ones — if the window count ever
-  // hits zero, 'window-all-closed' fires and quits the app mid-rebuild.
+  // Destroy old windows AFTER creating new ones so the pets never all
+  // vanish (and window count never hits zero) mid-rebuild.
   const oldWins = wins
   wins = []
   winAreas = []
@@ -149,7 +149,7 @@ function createTray() {
     { label: '설정 리로드', click: reloadConfig },
     { label: 'pets.json 열기', click: () => execFile('open', [CONFIG_PATH]) },
     { type: 'separator' },
-    { label: '종료', click: () => app.quit() },
+    { label: '종료', click: () => { console.warn('[desk-pets] quit via tray menu'); app.quit() } },
   ]))
 }
 
@@ -316,6 +316,13 @@ ipcMain.handle('pet-cross', (event, name, edge) => {
 
 app.whenReady().then(() => {
   if (app.dock) app.dock.hide()
+  // No default app menu: it carries the ⌘Q Quit accelerator, and a stray
+  // ⌘Q while the search panel has focus killed the whole app. Keep the
+  // Edit roles so copy/paste still works in the search box.
+  Menu.setApplicationMenu(Menu.buildFromTemplate([
+    { label: app.name, submenu: [{ role: 'hide' }, { role: 'hideOthers' }] },
+    { role: 'editMenu' },
+  ]))
   createWindows()
   reloadConfig()
   createTray()
@@ -330,4 +337,6 @@ app.whenReady().then(() => {
   screen.on('display-metrics-changed', scheduleRebuild)
 })
 
-app.on('window-all-closed', () => app.quit())
+// Tray app: stay alive even with zero windows (e.g. every display briefly
+// detaching). Quitting is only ever intentional, via the tray menu.
+app.on('window-all-closed', () => {})

@@ -20,7 +20,8 @@
   ],
   "scripts": {
     "start": "electron .",
-    "test": "node --test"
+    "test": "node --test",
+    "strip-bg": "electron scripts/strip-bg.js"
   },
   "devDependencies": {
     "electron": "^33.0.0"

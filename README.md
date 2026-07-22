@@ -1,7 +1,7 @@
 # my-claude-pets 🐾
 
 <p align="center">
-  <img src="docs/demo-v3.gif" width="560" alt="A pet with a live Claude Code token budget HUD gets picked up, dropped in mid-air, and floats back down to the desktop riding balloons" />
+  <img src="docs/demo-v4.gif" width="560" alt="A pet with a live Claude Code token budget HUD gets picked up, floats back down riding balloons, then opens the retro project search panel on click" />
 </p>
 
 Desktop pets for people who live in [Claude Code](https://claude.com/claude-code).
@@ -119,6 +119,17 @@ Paths can also be absolute or start with `~` (e.g.
 the repo. `pets.json` and everything you add to `images/` are gitignored —
 your customizations stay local. If the image path is missing, the pet
 falls back to its `emoji`. Use `scale` to size your character.
+
+**Image has a white background?** That's the most common snag — fix it
+with the bundled tool (only the background connected to the edges becomes
+transparent, whites inside your character are safe):
+
+```bash
+npm run strip-bg -- ~/Downloads/kitty.png images/kitty.png
+```
+
+For the full walkthrough — sizing, balloon sprites, troubleshooting, a
+multi-pet zoo — see **[docs/customizing.md](docs/customizing.md)**.
 
 ## How the token numbers work
 
